@@ -76,10 +76,18 @@ Set weight of ARG, MGE, VF database to 1000, 1000, 1000:
 ```sh
 python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 32 --weight 1000 1000 1000
 ```
-
-MetaRanker mainly use `subprocess` to call sequecne processing commands.
+Pass parameters to sequence processing tools.
+MetaRanker mainly use `subprocess` to call sequence processing commands.
 Some parameters used in MetaRanker can be passed, including `--blast_evalue`, `--blast_identity`,
 `--blast_cover_len`, `--cdhit_identity` and `-t`/`--threads`
+```sh
+python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 64 --blast_evalue 1e-5 --blast_identity 0.9 --blast_cover_len 85 --cdhit_identity 0.9
+```
+Force to overwrite existing output files of blastn, cd-hit, bwa, minimap2 and samtools. 
+By default, MetaRanker will not call a sequence processing command if the output file exists.
+```sh
+python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 32 --force
+```
 
 > [!NOTE]
 > 1. Preprocess of reads
@@ -89,7 +97,7 @@ Some parameters used in MetaRanker can be passed, including `--blast_evalue`, `-
 > Also, host sequence removing can be applied if needed.
 > 2. Assembly of contigs
 > We recommend [megahit](https://github.com/voutcn/megahit) or [metaspades](https://github.com/ablab/spades) for assembling Illumina reads (megahit may be faster),
-> and [flye](https://github.com/mikolmogorov/Flye) for correcting, assembling and polishing.
+> and [flye](https://github.com/mikolmogorov/Flye) for correcting, assembling and polishing nanopore or pacbio reads.
 
 Publications
 ---------------
