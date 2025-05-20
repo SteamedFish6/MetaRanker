@@ -14,7 +14,6 @@ MetaRanker is written in python3. Please install these packages in python enviro
  - biopython
 
 The following tools are needed for sequence processing. Please install them and add them to `$PATH`, so that these commands can be called in shell.
-If you are using a Ubuntu operating system, these tools can be installed via `apt` (except for cd-hit).
  - [blastn](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
  - [cd-hit](https://github.com/weizhongli/cdhit)
  - [bwa](https://github.com/lh3/bwa)
@@ -24,69 +23,94 @@ If you are using a Ubuntu operating system, these tools can be installed via `ap
 
 Installation:
 ---------------
-1.Clone this repository to your local directory. 
+1. Clone this repository to your local directory. 
 
-2.Install python packages. Skip if you have installed these packages.
+2. Install python packages. Skip if you have installed these packages.
 ```sh
 pip install numpy pandas biopython
 ```
-3.Install sequence processing tools.
-
-4.Change directory to where you cloned this repository to.
+3. Install blastn, cd-hit, bwa/minimap2, samtools and pigz. The installation instruction can be found at links above.
+If you are using a Ubuntu operating system, these tools can be installed via `apt` (except for cd-hit):
+```sh
+sudo apt-get install ncbi-blast+
+sudo apt-get install bwa
+sudo apt-get install minimap2
+sudo apt-get install samtools
+sudo apt-get install pigz
+```
+If you downloaded executable binary tools or compiled tools from source, Please add them to `$PATH`:
+```sh
+export PATH=$PATH:/home/software/bwa # add executable binary to $PATH, edit in ~/.bashrc
+```
+```sh
+cd /home/software/cd-hit
+make # complie
+make install # add complied tool to /usr/local/bin
+```
+Check if the tools are installed. If is installed, output should not be blank:
+```sh
+which blastn
+which cd-hit
+which bwa
+which minimap2
+which samtools
+which pigz
+```
+4. Change directory to where you cloned this repository to.
 ```sh
 cd /path/of/MetaRanker #example path
 ```
-5.Uncompress `database.tar.gz` under current directory.
+5. Uncompress `database.tar.gz` under current directory.
 ```sh
 tar -zxvf database.tar.gz
 ```
-6.Run python command to check installation and see help.
+6. Run python command to check installation and see help.
 ```sh
 python MetaRanker.py -h
 ```
 
 Usage: 
 ---------------
-Basic usage:
+1. Basic usage:
 ```sh
-python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 32
+python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 16
 ```
-For pair-ended reads:
+2. For pair-ended reads:
 ```sh
-python MetaRanker.py -c contigs.fa -r reads_1.clean.fastq.gz -R reads_2.clean.fastq.gz -o output_dir -t 32
+python MetaRanker.py -c contigs.fa -r reads_1.clean.fastq.gz -R reads_2.clean.fastq.gz -o output_dir -t 16
 ```
-For nanopore reads:
+3. For nanopore reads:
 ```sh
-python MetaRanker.py -c contigs.fa -r reads.nanopore.clean.fastq.gz --nanopore -o output_dir -t 32
+python MetaRanker.py -c contigs.fa -r reads.nanopore.clean.fastq.gz --nanopore -o output_dir -t 16
 ```
-For pacbio reads:
+4. For pacbio reads:
 ```sh
-python MetaRanker.py -c contigs.fa -r reads.pacbio.clean.fastq.gz --pacbio -o output_dir -t 32
+python MetaRanker.py -c contigs.fa -r reads.pacbio.clean.fastq.gz --pacbio -o output_dir -t 16
 ```
-Set minimum amount (1000) and cut-off length (250) of contigs:
+5. Set minimum amount (1000) and cut-off length (250) of contigs:
 ```sh
-python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 32 --minnum 1000 --minlen 250
+python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 16 --minnum 1000 --minlen 250
 ```
-Keep original names of contigs. Usually names of contigs produced from assemblers contains white spaces,
+6. Keep original names of contigs. Usually names of contigs produced from assemblers contains white spaces,
 which blastn will cut them off. So MetaRanker renames contigs by default.
 ```sh
-python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 32 --no_rename_contigs
+python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 16 --no_rename_contigs
 ```
-Set weight of ARG, MGE, VF database to 1000, 1000, 1000:
+7. Set weight of ARG, MGE, VF database to 1000, 1000, 1000:
 ```sh
-python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 32 --weight 1000 1000 1000
+python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 16 --weight 1000 1000 1000
 ```
-Pass parameters to sequence processing tools.
+8. Pass parameters to sequence processing tools.
 MetaRanker mainly use `subprocess` to call sequence processing commands.
 Some parameters used in MetaRanker can be passed, including `--blast_evalue`, `--blast_identity`,
 `--blast_cover_len`, `--cdhit_identity` and `-t`/`--threads`
 ```sh
 python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 64 --blast_evalue 1e-5 --blast_identity 0.9 --blast_cover_len 85 --cdhit_identity 0.9
 ```
-Force to overwrite existing output files of blastn, cd-hit, bwa, minimap2 and samtools. 
+9. Force to overwrite existing output files of blastn, cd-hit, bwa, minimap2 and samtools. 
 By default, MetaRanker will not call a sequence processing command if the output file exists.
 ```sh
-python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 32 --force
+python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 16 --force
 ```
 
 > [!NOTE]
@@ -98,6 +122,13 @@ python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 32 -
 > 2. Assembly of contigs
 > We recommend [megahit](https://github.com/voutcn/megahit) or [metaspades](https://github.com/ablab/spades) for assembling Illumina reads (megahit may be faster),
 > and [flye](https://github.com/mikolmogorov/Flye) for correcting, assembling and polishing nanopore or pacbio reads.
+
+An example pipeline:
+```sh
+fastp -i sample_1.fastq.gz -o sample_1.clean.fastq.gz -I sample_2.fastq.gz -O sample_2.clean.fastq.gz -w 16
+megahit -1 sample_1.clean.fastq.gz -2 sample_2.clean.fastq.gz -o contig_dir --out-prefix sample -t 16
+python MetaRanker.py -c contig_dir/sample.contigs.fa -r sample_1.clean.fastq.gz -R sample_2.clean.fastq.gz -o metaranker_dir -t 16
+```
 
 Publications
 ---------------
