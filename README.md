@@ -88,8 +88,9 @@ Some parameters used in MetaRanker can be passed, including `--blast_evalue`, `-
 > and [chopper](https://github.com/wdecoster/chopper) for nanopore or pacbio reads.
 > Also, host sequence removing can be applied if needed.
 > 2. Assembly of contigs
-> We recommend [megahit]() or [metaspades]() for assembling Illumina reads (megahit may be faster),
-> and [flye]() for correcting, assembling and polishing 
+> We recommend [megahit](https://github.com/voutcn/megahit) or [metaspades](https://github.com/ablab/spades) for assembling Illumina reads (megahit may be faster),
+> and [flye](https://github.com/mikolmogorov/Flye) for correcting, assembling and polishing.
+
 Publications
 ---------------
 This project was not published yet —— but you can still have a try on your metagenomic sequencing data.
