@@ -203,10 +203,11 @@ class Sample:
         printTime()
         print("Picking Risk Elements from Contigs...")
         raw_fasta_dict = readFastaFile(self.contigs_fname, to_which='dict')
-        new_fasta_dict = {}
+        
         for dbname in self.dblist:
             M8file = self.M8_fdict[dbname]
             sheet = pd.read_csv(M8file, sep='\t')
+            new_fasta_dict = {}
             for i in range(len(sheet.index)):
                 contig_ID = sheet.loc[sheet.index[i], 'query_ID']
                 gene_name = sheet.loc[sheet.index[i], 'gene_name']
