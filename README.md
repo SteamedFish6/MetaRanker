@@ -127,8 +127,46 @@ An example pipeline:
 ```sh
 fastp -i sample_1.fastq.gz -o sample_1.clean.fastq.gz -I sample_2.fastq.gz -O sample_2.clean.fastq.gz -w 16
 megahit -1 sample_1.clean.fastq.gz -2 sample_2.clean.fastq.gz -o contig_dir --out-prefix sample -t 16
-python MetaRanker.py -c contig_dir/sample.contigs.fa -r sample_1.clean.fastq.gz -R sample_2.clean.fastq.gz -o metaranker_dir -t 16
+python MetaRanker.py -c contig_dir/sample.contigs.fa -r sample_1.clean.fastq.gz -R sample_2.clean.fastq.gz -o metaranker_output -t 16
 ```
+
+Outputs: 
+---------------
+In output directory, result files should be:
+
+1. RiskVector, RiskModule, CoocurScore, RiskIndex, ReadsNum, BasesNum, ContigsNum of sample
+> metaranker_output/risk_result/RiskStat_sample.tsv
+
+2. Co-occurrence matrix of sample
+> metaranker_output/risk_result/RiskMatrix_sample.csv
+
+3. BLAST results in M8 format
+> metaranker_output/output_M8/*.tsv
+
+4. Filtered, annotated M8 tables
+> metaranker_output/preprocessed_M8/*.tsv
+
+5. Filtered, annotated M8 tables with categorized genes
+> metaranker_output/preprocessed_M8/categorized_M8/*.tsv
+
+
+6. Sequences and depths of Risk Elements
+> metaranker_output/risk_elements/*
+
+7. BPM abundance of Risk Elements
+> metaranker_output/BPM/*.tsv
+
+8. High risk sequences with co-ocurrence structures dumped from contigs
+> metaranker_output/coocur_structures/*.fasta
+
+9. Contigs renamed by MetaRanker (can be removed as needed)
+> metaranker_output/temp/*.fa
+
+
+> [!TIP]
+> The co-ocurrence structures of each samples can be visualized with `SeqVisualize.py`.
+> 
+> After concatenating `RiskStat_*.tsv` of samples, a 3D hazard space plot can be produced with `Plot3Dspace.py`.
 
 Publications
 ---------------
