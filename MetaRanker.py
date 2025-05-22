@@ -474,24 +474,28 @@ class Sample:
                 # self.M8_fdict["MGE_category"] = outname
                 sheet.to_csv(outname, index=False, sep='\t')
     
-    def CalcRPM(self, outpath: str, is_sorted=False) -> None:
+    def CalcBPM(self, outpath: str, is_sorted=False) -> None:
         printTime()
-        print("Calculating RPM abundance...")
-        total_reads_num = self.total_reads_num
+        print("Calculating BPM abundance...")
+        total_bases_num = self.total_reads_bases
         for dbname in self.depth_fdict:
             depth_fname = self.depth_fdict[dbname]
             if depth_fname:
                 if os.path.getsize(depth_fname) > 0:
-                    outname = os.path.join(outpath, f"RPM.{self.name_tag}.{dbname}.tsv")
+                    outname = os.path.join(outpath, f"BPM.{self.name_tag}.{dbname}.tsv")
                     
                     sheet = pd.read_csv(depth_fname, sep='\t', header=None, index_col=0)
                     sheet.index.name = "Element"
-                    sheet.columns = ["RPM"]
+                    sheet.columns = ["depth"]
+                    seq_compo_list = [seqname.split('#') for seqname in sheet.index]
+                    sheet['length'] = [abs(int(seq_compo[3]) - int(seq_compo[2])) +1 for seq_compo in seq_compo_list]
                     
-                    RPM_sheet = sheet * 1000000 / total_reads_num #'RPM'
+                    BPM_sheet = pd.DataFrame(index=sheet.index)
+                    BPM_sheet["BPM"] = sheet["depth"] / sheet["length"] * 1e6 / total_bases_num
+                    
                     if is_sorted:
-                        RPM_sheet = RPM_sheet.sort_values(by=RPM_sheet.columns[0], ascending=False)
-                    RPM_sheet.to_csv(outname, sep='\t')
+                        BPM_sheet = BPM_sheet.sort_values(by=BPM_sheet["BPM"], ascending=False)
+                    BPM_sheet.to_csv(outname, sep='\t')
 
 
 def checkCallCMD(cmd: str, outname: str, is_cover_old=False, print_skipped=True) -> bool:
@@ -744,7 +748,7 @@ if __name__ == "__main__":
     Risk_Result_Path = makeDir(Out_Path, "risk_result")
     Extract_Fasta_Path = makeDir(Out_Path, "coocur_structures")
     M8cate_Path = makeDir(M8pp_Path, "categorized_M8")
-    RPM_Path = makeDir(Out_Path, "RPM")
+    BPM_Path = makeDir(Out_Path, "BPM")
     
     DbMask_Dict = loadDbMaskDict(Seqname_Lendict_Fname)
     Cate_Dict = loadCateDict(Category_Fname_Dict)
@@ -764,7 +768,7 @@ if __name__ == "__main__":
         Sample_Obj.RankRisk(Risk_Result_Path, weight_dict=Weight_Dict)
         Sample_Obj.ExtractRiskSeqs(Extract_Fasta_Path, Dump_Gene_DB_Mark_Dict)
         Sample_Obj.AddCateName(M8cate_Path, Cate_Dict, sepline=is_Category_Sepline)
-        Sample_Obj.CalcRPM(RPM_Path)
+        Sample_Obj.CalcBPM(BPM_Path)
     
     t2 = time.time()
     printTime()
