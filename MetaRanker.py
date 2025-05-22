@@ -491,7 +491,7 @@ class Sample:
                     sheet['length'] = [abs(int(seq_compo[3]) - int(seq_compo[2])) +1 for seq_compo in seq_compo_list]
                     
                     BPM_sheet = pd.DataFrame(index=sheet.index)
-                    BPM_sheet["BPM"] = sheet["depth"] / sheet["length"] * 1e6 / total_bases_num
+                    BPM_sheet["BPM"] = sheet["depth"] * sheet["length"] * 1e6 / total_bases_num
                     
                     if is_sorted:
                         BPM_sheet = BPM_sheet.sort_values(by=BPM_sheet["BPM"], ascending=False)
