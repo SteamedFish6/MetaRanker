@@ -36,7 +36,7 @@ def _getRankerArgs():
     parser.add_argument("--blast_cover_len", type=int, help="[Int] minimum cover length of blastn (default: 75)", default=75)
     parser.add_argument("--cdhit_identity", type=float, help="[Float] minimum identity of cd-hit (default: 0.85)", default=0.85)
     
-    parser.add_argument("--weight", nargs=3, type=float, help="[Float Float Float] weight of ARG, MGE, VF database (default: 50000 5000 2500)", default=[5e4, 5e3, 2.5e3])
+    parser.add_argument("--weight", nargs=3, type=float, help="[Float Float Float] weight of ARG, MGE, VF database (default: 50000 10000 20000)", default=[5e4, 1e4, 2e4])
     
     parser.add_argument('-t', "--threads", type=int, help="[Int] number of threads for BLAST, CD-HIT, BWA, minimap2 and samtools (default: 16)", default=16)
     parser.add_argument("--force", action='store_true', help="[Flag] force to cover existing output files of BLAST, CD-HIT, BWA, minimap2 and samtools")
@@ -129,6 +129,8 @@ class Sample:
             outname = os.path.join(outpath, "out_{}_{}_{}.tsv".format(self.blastmethod, self.name_tag, dbname))
             is_rename = checkCallCMD("{} -task {} -query {} -db {} -out {} -outfmt \"6\" -evalue {} -perc_identity {} -num_threads {}".format(self.blastmethod, self.blastmethod, self.contigs_fname, db_fname, tmp_outname, BLAST_EVALUE, PERC_IDENTITY, NUM_THREAD), outname, is_cover_old=is_cover_old)
             if is_rename:
+                if is_cover_old and os.path.exists(outname):
+                    os.remove(outname)
                 os.rename(tmp_outname, outname)
             self.M8_fdict[dbname] = outname
     
@@ -229,6 +231,8 @@ class Sample:
             cdhit_REseq_fname = os.path.join(output_dir, "{}.{}.cdhit.fa".format(self.name_tag, dbname))
             is_rename = checkCallCMD("cd-hit -i {} -o {} -c {} -aS {} -n 5 -d 0 -g 1 -M 0 -T {}".format(REseq_fname, tmp_cdhit_REseq_fname, CDHIT_IDENTITY, CDHIT_IDENTITY, NUM_THREAD), cdhit_REseq_fname, is_cover_old=is_cover_old)
             if is_rename:
+                if is_cover_old and os.path.exists(cdhit_REseq_fname):
+                    os.remove(cdhit_REseq_fname)
                 os.rename(tmp_cdhit_REseq_fname, cdhit_REseq_fname)
             self.REseq_fdict[dbname] = cdhit_REseq_fname
     
@@ -249,6 +253,8 @@ class Sample:
                     print("Processing BWA, {} against {} {}".format(cdhit_REseq_fname, self.reads_fname1, self.reads_fname2))
                     is_rename = checkCallCMD(cmd1, depth_fname, is_cover_old=is_cover_old)
                     if is_rename:
+                        if is_cover_old and os.path.exists(bam_fname):
+                            os.remove(bam_fname)
                         os.rename(tmp_bam_fname, bam_fname)
                     checkCallCMD("samtools index {}".format(bam_fname), depth_fname, is_cover_old=is_cover_old)
                     cmd2 = "samtools depth -a {} | ".format(bam_fname) + '''awk 'BEGIN {OFS="\t"} {sum[$1]+=$3; count[$1]++} END {for (gene in sum) print gene, sum[gene]/count[gene]}' ''' + "> {}".format(tmp_depth_fname)
@@ -256,6 +262,8 @@ class Sample:
                     print("Processing samtools depth, in: {}".format(bam_fname))
                     is_rename = checkCallCMD(cmd2, depth_fname, is_cover_old=is_cover_old)
                     if is_rename:
+                        if is_cover_old and os.path.exists(depth_fname):
+                            os.remove(depth_fname)
                         os.rename(tmp_depth_fname, depth_fname)
                 except:
                     print("Failed to calculate depth.")
@@ -282,6 +290,8 @@ class Sample:
                     print("Processing minimap2, {} against {}".format(cdhit_REseq_fname, self.reads_fname1))
                     is_rename = checkCallCMD(cmd1, depth_fname, is_cover_old=is_cover_old)
                     if is_rename:
+                        if is_cover_old and os.path.exists(bam_fname):
+                            os.remove(bam_fname)
                         os.rename(tmp_bam_fname, bam_fname)
                     checkCallCMD("samtools index {}".format(bam_fname), depth_fname, is_cover_old=is_cover_old)
                     cmd2 = "samtools depth -a {} | ".format(bam_fname) + '''awk 'BEGIN {OFS="\t"} {sum[$1]+=$3; count[$1]++} END {for (gene in sum) print gene, sum[gene]/count[gene]}' ''' + "> {}".format(tmp_depth_fname)
@@ -289,6 +299,8 @@ class Sample:
                     print("Processing samtools depth, in: {}".format(bam_fname))
                     is_rename = checkCallCMD(cmd2, depth_fname, is_cover_old=is_cover_old)
                     if is_rename:
+                        if is_cover_old and os.path.exists(depth_fname):
+                            os.remove(depth_fname)
                         os.rename(tmp_depth_fname, depth_fname)
                 except:
                     print("Failed to calculate depth.")
