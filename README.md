@@ -60,11 +60,7 @@ which pigz
 ```sh
 cd /path/of/MetaRanker #example path
 ```
-5. Uncompress `database.tar.gz` under current directory.
-```sh
-tar -zxvf database.tar.gz
-```
-6. Run python command to check installation and see help.
+5. Run python command to check installation and see help.
 ```sh
 python MetaRanker.py -h
 ```
