@@ -610,6 +610,8 @@ def renameCateName(cate_name: str, dbname: str, cate_type: str=None) -> str:
                 cate_name = 'beta-lactam'
             elif 'tetracycline' in cate_name:
                 cate_name = 'Tetracycline'
+            elif 'glycopeptide resistance' in cate_name:
+                cate_name = 'Glycopeptide'
             elif len(cate_name) < 10:
                 cate_name = 'Aminoglycoside'
             else:
