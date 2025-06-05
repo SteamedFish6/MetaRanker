@@ -509,6 +509,25 @@ class Sample:
                         BPM_sheet = BPM_sheet.sort_values(by=BPM_sheet["BPM"], ascending=False)
                     BPM_sheet.to_csv(outname, sep='\t')
 
+    def CalcRPM(self, outpath: str, is_sorted=False) -> None:
+        printTime()
+        print("Calculating RPM abundance...")
+        total_reads_num = self.total_reads_num
+        for dbname in self.depth_fdict:
+            depth_fname = self.depth_fdict[dbname]
+            if depth_fname:
+                if os.path.getsize(depth_fname) > 0:
+                    outname = os.path.join(outpath, f"RPM.{self.name_tag}.{dbname}.tsv")
+                    
+                    sheet = pd.read_csv(depth_fname, sep='\t', header=None, index_col=0)
+                    sheet.index.name = "Element"
+                    sheet.columns = ["RPM"]
+                    
+                    RPM_sheet = sheet * 1000000 / total_reads_num #'RPM'
+                    if is_sorted:
+                        RPM_sheet = RPM_sheet.sort_values(by=RPM_sheet.columns[0], ascending=False)
+                    RPM_sheet.to_csv(outname, sep='\t')
+
 
 def checkCallCMD(cmd: str, outname: str, is_cover_old=False, print_skipped=True) -> bool:
     '''If outname not exists, then call cmd
@@ -763,6 +782,7 @@ if __name__ == "__main__":
     Extract_Fasta_Path = makeDir(Out_Path, "coocur_structures")
     M8cate_Path = makeDir(M8pp_Path, "categorized_M8")
     BPM_Path = makeDir(Out_Path, "BPM")
+    RPM_Path = makeDir(Out_Path, "RPM")
     
     DbMask_Dict = loadDbMaskDict(Seqname_Lendict_Fname)
     Cate_Dict = loadCateDict(Category_Fname_Dict)
@@ -783,6 +803,7 @@ if __name__ == "__main__":
         Sample_Obj.ExtractRiskSeqs(Extract_Fasta_Path, Dump_Gene_DB_Mark_Dict)
         Sample_Obj.AddCateName(M8cate_Path, Cate_Dict, sepline=is_Category_Sepline)
         Sample_Obj.CalcBPM(BPM_Path)
+        Sample_Obj.CalcRPM(RPM_Path)
     
     t2 = time.time()
     printTime()

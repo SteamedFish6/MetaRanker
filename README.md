@@ -44,7 +44,7 @@ export PATH=$PATH:/home/software/bwa # add executable binary to $PATH, edit in ~
 ```
 ```sh
 cd /home/software/cd-hit
-make # complie
+make openmp=yes # complie the multiple threaded version
 make install # add complied tool to /usr/local/bin
 ```
 Check if the tools are installed. If is installed, output should not be blank:
