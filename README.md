@@ -152,17 +152,20 @@ In output directory, result files should be:
 7. BPM abundance of Risk Elements
 > metaranker_output/BPM/*.tsv
 
-8. High risk sequences with co-ocurrence structures dumped from contigs
+8. RPM abundance of Risk Elements
+> metaranker_output/RPM/*.tsv
+
+9. High risk sequences with co-ocurrence structures dumped from contigs (Visualization tool can be found at )
 > metaranker_output/coocur_structures/*.fasta
 
-9. Contigs renamed by MetaRanker (can be removed as needed)
+10. Contigs renamed by MetaRanker (can be removed as needed)
 > metaranker_output/temp/*.fa
 
 
 > [!TIP]
-> The co-ocurrence structures of each samples can be visualized with `SeqVisualize.py`.
+> The co-ocurrence structures of each samples can be visualized with [MetaRanker-utils](https://github.com/SteamedFish6/MetaRanker-utils) `/CoocurStructure/CooccurStructureVisualizer.py`.
 > 
-> After concatenating `RiskStat_*.tsv` of samples, a 3D hazard space plot can be produced with `Plot3Dspace.py`.
+> After concatenating `RiskStat_*.tsv` of samples, a 3D hazard space plot can be produced with [MetaRanker-utils](https://github.com/SteamedFish6/MetaRanker-utils) `/Plotting/Fig2/Plot3Dspace.py` (Comming Soon).
 
 Publications
 ---------------
