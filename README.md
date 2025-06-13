@@ -145,7 +145,6 @@ In output directory, result files should be:
 5. Filtered, annotated M8 tables with categorized genes
 > metaranker_output/preprocessed_M8/categorized_M8/*.tsv
 
-
 6. Sequences and depths of Risk Elements
 > metaranker_output/risk_elements/*
 
@@ -161,11 +160,12 @@ In output directory, result files should be:
 10. Contigs renamed by MetaRanker (can be removed as needed)
 > metaranker_output/temp/*.fa
 
-
 > [!TIP]
-> The co-ocurrence structures of each samples can be visualized with [MetaRanker-utils](https://github.com/SteamedFish6/MetaRanker-utils) `/CoocurStructure/CooccurStructureVisualizer.py`.
+> Analysis and Visualization tools can be found at [MetaRanker-utils](https://github.com/SteamedFish6/MetaRanker-utils).
 > 
-> After concatenating `RiskStat_*.tsv` of samples, a 3D hazard space plot can be produced with [MetaRanker-utils](https://github.com/SteamedFish6/MetaRanker-utils) `/Plotting/Fig2/Plot3Dspace.py` (Comming Soon).
+> The co-ocurrence structures of each samples can be visualized with `/CoocurStructure/CooccurStructureVisualizer.py` in MetaRanker-utils.
+> 
+> After concatenating `RiskStat_*.tsv` of samples, a 3D hazard space plot can be produced with `/PlottingScripts/fig2/ThreeDHazardSpace.py` in MetaRanker-utils.
 
 Publications
 ---------------
