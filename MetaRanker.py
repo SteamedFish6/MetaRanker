@@ -155,8 +155,8 @@ class Sample:
                     row = sheet.loc[i]
                     groupmax_name = row['query_ID']
                     if groupmax_name not in groupmax_name_dict:
-                        groupmax_name_dict[groupmax_name] = 1
-                sheet = sheet.loc[list(groupmax_name_dict.keys())]
+                        groupmax_name_dict[groupmax_name] = i
+                sheet = sheet.loc[list(groupmax_name_dict.values())]
             
             elif is_pos_max == True: #remove duplicate query_ID by start_pos & end_pos
                 outname = os.path.join(outpath, "agm_bp_sfp_"+os.path.basename(M8file))
