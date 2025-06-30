@@ -4,7 +4,7 @@ A Computational Pipeline for Ranking Resistome Risk of Metagenomic Samples
 
 Workflow:
 ---------------
-![workflow](https://github.com/user-attachments/assets/8d7a6b87-4f3f-4099-848c-ac5365bf72fe)
+![workflow](https://github.com/user-attachments/assets/cf0857a3-d198-4af2-9dcd-b997a4d09697)
 
 Requirements:
 ---------------
