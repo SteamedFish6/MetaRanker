@@ -27,10 +27,11 @@ def _getRankerArgs():
     parser.add_argument("--nanopore", action='store_true', help="[Flag] process nanopore reads")
     parser.add_argument("--pacbio", action='store_true', help="[Flag] process pacbio reads")
     
-    parser.add_argument("--minnum", type=int, help="[Int] stop running pipeline if input contigs fewer than setting threshold (default: 2000)", default=2000)
+    parser.add_argument("--minnum", type=int, help="[Int] stop running pipeline if input contigs fewer than setting threshold (default: 200)", default=200)
     parser.add_argument("--minlen", type=int, help="[Int] discard input contigs shorter than setting threshold (default: 500)", default=500)
     parser.add_argument("--no_rename_contigs", action='store_true', help="[Flag] do not rename contigs names with contigs file name")
     
+    parser.add_argument("--database", type=str, help="[Dir] specify a directory of database", default=None)
     parser.add_argument("--blast_evalue", type=float, help="[Float] evalue of blastn (default: 0.0001)", default=0.0001)
     parser.add_argument("--blast_identity", type=float, help="[Float] minimum identity of blastn (default: 0.85)", default=0.85)
     parser.add_argument("--blast_cover_len", type=int, help="[Int] minimum cover length of blastn (default: 75)", default=75)
@@ -67,6 +68,7 @@ class Sample:
         self.reads_type = reads_type
         
         self.name_tag = os.path.basename(contigs_fname).rsplit('.', 1)[0]
+        self.seqname_tag = os.path.basename(contigs_fname).rsplit('.', 1)[0].replace('#', '_').replace('|', '_')
         self.blastmethod = "blastn"
         self.M8_fdict = {} #key: db, value: M8_fname
         self.REseq_fdict = {} #key: db, value: RiskElements.fa
@@ -98,7 +100,7 @@ class Sample:
             print("{} sequences found in {}".format(ncontig, self.contigs_fname))
             if is_rename_contigs:
                 outname = os.path.join(outpath, "rename_{}".format(minlen, os.path.basename(self.contigs_fname)))
-                record_dict = renameFastaSeqs(record_dict, self.name_tag)
+                record_dict = renameFastaSeqs(record_dict, self.seqname_tag)
                 writeFastaFromDict(record_dict, outname)
                 self.contigs_fname = outname
         else:
@@ -108,7 +110,7 @@ class Sample:
                 if len(seq) >= minlen:
                     new_record_dict[seqname] = seq
             if is_rename_contigs:
-                new_record_dict = renameFastaSeqs(new_record_dict, self.name_tag)
+                new_record_dict = renameFastaSeqs(new_record_dict, self.seqname_tag)
                 outname = os.path.join(outpath, "rename_filter{}_{}".format(minlen, os.path.basename(self.contigs_fname)))
             else:
                 outname = os.path.join(outpath, "filter{}_{}".format(minlen, os.path.basename(self.contigs_fname)))
@@ -613,10 +615,13 @@ def renameFastaSeqs(raw_fasta_dict:dict, name_prefix: str) -> dict:
 
 def extractCateNum(target_id: str, dbname: str) -> str:
     cate_num = target_id
-    if dbname == "CARD":
-        cate_num = "ARO:" + target_id.split(':')[1][:7]
-    elif dbname == "VFDB":
-        cate_num = 'VF' + target_id.split(' (VF')[1].split(') -')[0]
+    try:
+        if dbname == "CARD":
+            cate_num = "ARO:" + target_id.split(':')[1][:7]
+        elif dbname == "VFDB":
+            cate_num = 'VF' + target_id.split(' (VF')[1].split(') -')[0]
+    except:
+        pass
     return cate_num
 
 def renameCateName(cate_name: str, dbname: str, cate_type: str=None) -> str:
@@ -752,7 +757,10 @@ if __name__ == "__main__":
     Colinear_Min_NonCross_Len = params.blast_cover_len #for BLAST M8 result
     
     Program_Dir_Path = os.path.dirname(os.path.abspath(__file__))
-    Db_Path = os.path.join(Program_Dir_Path, "ranker_db", "db_fasta")
+    Db_Path = os.path.join(Program_Dir_Path, "ranker_db")
+    if params.database:
+        Db_Path = params.database
+    Db_Path_fasta = os.path.join(Db_Path, "db_fasta")
     Db_List = ["CARD", "MGE", "VFDB"]
     Weight_List = params.weight
     # Weight_List_Str = params.weight
@@ -763,16 +771,16 @@ if __name__ == "__main__":
     
     Weight_Dict = {Db_List[i]: Weight_List[i] for i in range(len(Db_List))}
     
-    Seqname_Lendict_Fname = os.path.join(Program_Dir_Path, "ranker_db", "ranker_blastdb_seqname_length.tsv")
-    Category_Fname_Dict = {"CARD": os.path.join(Program_Dir_Path, "ranker_db", "aro_index.tsv"),
-                           "VFDB": os.path.join(Program_Dir_Path, "ranker_db", "VFs.tsv"),
+    Seqname_Lendict_Fname = os.path.join(Db_Path, "ranker_blastdb_seqname_length.tsv")
+    Category_Fname_Dict = {"CARD": os.path.join(Db_Path, "aro_index.tsv"),
+                           "VFDB": os.path.join(Db_Path, "VFs.tsv"),
                            }
     is_Category_Sepline = True
     
     Dump_Gene_DB_Mark_Dict = {"CARD": '1', "MGE": '2', "VFDB": '3'}
     
     ## Start Run
-    PrepareBlastDB(Db_Path, Db_List, is_cover=is_Cover_Old_File)
+    PrepareBlastDB(Db_Path_fasta, Db_List, is_cover=is_Cover_Old_File)
     
     Tmp_Path = makeDir(Out_Path, "temp")
     M8_Path = makeDir(Out_Path, "output_M8")
@@ -788,7 +796,7 @@ if __name__ == "__main__":
     Cate_Dict = loadCateDict(Category_Fname_Dict)
     
     
-    Sample_Obj = Sample(Contigs_Fname, Db_Path, Db_List, Reads_Fname1, Reads_Fname2, reads_type=Reads_Type)
+    Sample_Obj = Sample(Contigs_Fname, Db_Path_fasta, Db_List, Reads_Fname1, Reads_Fname2, reads_type=Reads_Type)
     Sample_Obj.SeqPreprocess(Tmp_Path, minlen=Seq_MinLen, is_rename_contigs=is_Rename_Contig)
     
     if Sample_Obj.ncontig < params.minnum:
