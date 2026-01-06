@@ -407,11 +407,17 @@ class Sample:
                                 gene_name = use_rows_single['gene_name']
                                 start_query = use_rows_single['start_query']
                                 end_query = use_rows_single['end_query']
+                                start_target = use_rows_single['start_target']
+                                end_target = use_rows_single['end_target']
+                                start_query, end_query = (end_query, start_query) if start_target > end_target else (start_query, end_query)
                                 db_info_str_list.append("{}{},{},{}".format(dbmark, gene_name, start_query, end_query))
                         else:
                             gene_name = use_rows['gene_name']
                             start_query = use_rows['start_query']
                             end_query = use_rows['end_query']
+                            start_target = use_rows['start_target']
+                            end_target = use_rows['end_target']
+                            start_query, end_query = (end_query, start_query) if start_target > end_target else (start_query, end_query)
                             db_info_str_list.append("{}{},{},{}".format(dbmark, gene_name, start_query, end_query)) #add db mark char before gene name
                 new_seqname = "{}| {}".format(query_ID, "; ".join(db_info_str_list))
                 new_record_dict[new_seqname] = record_dict[query_ID]
