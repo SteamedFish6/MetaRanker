@@ -40,10 +40,10 @@ sudo apt-get install pigz
 ```
 If you downloaded executable binary tools or compiled tools from source, Please add them to `$PATH`:
 ```sh
-export PATH=$PATH:/home/software/bwa # add executable binary to $PATH, edit in ~/.bashrc
+export PATH=$PATH:/home/user/software/bwa # add executable binary to $PATH, edit in ~/.bashrc
 ```
 ```sh
-cd /home/software/cd-hit
+cd /home/user/software/cd-hit
 make openmp=yes # complie the multiple threaded version
 make install # add complied tool to /usr/local/bin
 ```
@@ -110,12 +110,12 @@ python MetaRanker.py -c contigs.fa -r reads.clean.fastq.gz -o output_dir -t 16 -
 ```
 
 > [!NOTE]
-> 1. Preprocess of reads
+> 1. Preprocess of reads: 
 > To ensure the precision of sequence alignment, quality control of raw reads is needed.
 > We recommend [fastp](https://github.com/OpenGene/fastp) or [trimmomatic](https://github.com/usadellab/Trimmomatic) for quality control of Illumina reads,
 > and [chopper](https://github.com/wdecoster/chopper) for nanopore or pacbio reads.
 > Also, host sequence removing can be applied if needed.
-> 2. Assembly of contigs
+> 2. Assembly of contigs: 
 > We recommend [megahit](https://github.com/voutcn/megahit) or [metaspades](https://github.com/ablab/spades) for assembling Illumina reads (megahit may be faster),
 > and [flye](https://github.com/mikolmogorov/Flye) for correcting, assembling and polishing nanopore or pacbio reads.
 
@@ -154,18 +154,18 @@ In output directory, result files should be:
 8. RPM abundance of Risk Elements
 > metaranker_output/RPM/*.tsv
 
-9. High risk sequences with co-ocurrence structures dumped from contigs (Visualization tool can be found at )
+9. High risk sequences with co-ocurrence structures dumped from contigs (Visualization tool can be found [here](https://github.com/SteamedFish6/MetaRanker-utils/blob/main/CoocurStructure/CooccurStructureVisualizer.py))
 > metaranker_output/coocur_structures/*.fasta
 
 10. Contigs renamed by MetaRanker (can be removed as needed)
 > metaranker_output/temp/*.fa
 
 > [!TIP]
-> Analysis and Visualization tools can be found at [MetaRanker-utils](https://github.com/SteamedFish6/MetaRanker-utils).
+> Analysis and Visualization tools can be found in [MetaRanker-utils](https://github.com/SteamedFish6/MetaRanker-utils).
 > 
 > The co-ocurrence structures of each samples can be visualized with `/CoocurStructure/CooccurStructureVisualizer.py` in MetaRanker-utils.
 > 
-> After concatenating `RiskStat_*.tsv` of samples, a 3D hazard space plot can be produced with `/PlottingScripts/fig2/ThreeDHazardSpace.py` in MetaRanker-utils.
+> After concatenating `RiskStat_*.tsv` of samples, a 3D hazard space plot can be produced with `/PlottingScripts/fig4/ThreeDHazardSpace.py` in MetaRanker-utils.
 
 Publications
 ---------------
